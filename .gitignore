@@ -1,0 +1,22 @@
+# secrets / local state — never commit
+.keys/
+.env
+.env.*
+!.env.example
+mainnet.json
+recipients*.json
+
+# node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# rust / anchor
+target/
+**/target/
+.anchor/
+test-ledger/
+
+# misc
+*.log
+.DS_Store

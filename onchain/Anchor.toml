@@ -1,0 +1,19 @@
+[toolchain]
+package_manager = "pnpm"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.mainnet]
+budgent_vault = "H9nJ3SKkXExHCqs56jaFsVvRajTFzTyNqjmZLWqeV7yM"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "mainnet"
+wallet = "../.keys/owner.json"
+
+[scripts]
+test = "pnpm exec ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
