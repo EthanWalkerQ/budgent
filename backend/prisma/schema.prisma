@@ -1,0 +1,157 @@
+// Budgent backend data model.
+// On-chain is the source of truth for funds & policy enforcement; this DB stores the
+// off-chain context, the lifecycle of intents/payments, the domain→recipient registry,
+// API credentials, and an immutable audit log. Cached policy/balance fields are refreshed
+// from chain and are never trusted for enforcement.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentStatus {
+  CREATED // intent created, not yet executed
+  HELD // at/above co-sign threshold — awaiting owner approval
+  SETTLED // executed on-chain, success
+  APPROVED // executed on-chain after owner co-sign, success
+  REVERTED // submitted, network rejected it (policy violation) — real failed tx
+  DENIED // owner denied a held payment, nothing submitted
+  FAILED // could not be submitted (infra / malformed) — no enforcement claim
+}
+
+enum PaymentModel {
+  PUSH // agent initiates
+  INVOICE // resource bills the agent
+}
+
+model Vault {
+  id            String   @id @default(cuid())
+  vaultPda      String   @unique
+  owner         String // master authority pubkey
+  seedId        BigInt // the u64 vault_id seed
+  mint          String // SPL mint, or native sentinel (11111111111111111111111111111111)
+  asset         String // display symbol: SOL / USDC / ...
+  decimals      Int
+  delegatePubkey String?
+  delegateKeyRef String? // keystore id holding the delegate secret
+  label         String?
+
+  // cached on-chain policy/state (refreshed from chain; not authoritative)
+  perTxBase      BigInt  @default(0)
+  dailyBase      BigInt  @default(0)
+  cosignBase     BigInt  @default(0)
+  delegateActive Boolean @default(false)
+  allowlist      String[] @default([])
+  blocklist      String[] @default([])
+  windowStart    BigInt  @default(0)
+  spentInWindow  BigInt  @default(0)
+  balanceBase    BigInt  @default(0)
+  totalPaidBase  BigInt  @default(0)
+  paymentCount   BigInt  @default(0)
+  policySyncedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payments  Payment[]
+  apiKeys   ApiKey[]
+  resources Resource[]
+
+  @@index([owner])
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  vault      Vault     @relation(fields: [vaultId], references: [id], onDelete: Cascade)
+  vaultId    String
+  keyId      String    @unique // public id, e.g. bk_live_xxx
+  secretHash String // sha256 of the bearer secret
+  hmacSecret String // HMAC signing secret (replay protection)
+  scopes     String[]  @default([])
+  label      String?
+  createdAt  DateTime  @default(now())
+  revokedAt  DateTime?
+
+  @@index([vaultId])
+}
+
+model Resource {
+  id        String   @id @default(cuid())
+  vault     Vault    @relation(fields: [vaultId], references: [id], onDelete: Cascade)
+  vaultId   String
+  domain    String // e.g. gpu.inference.io
+  recipient String // pubkey the agent pays for this domain
+  label     String?
+  url       String?
+  priceUi   Float? // optional list price for the invoice model
+  createdAt DateTime @default(now())
+
+  @@unique([vaultId, domain])
+  @@index([vaultId])
+}
+
+model Payment {
+  id      String @id @default(cuid())
+  vault   Vault  @relation(fields: [vaultId], references: [id], onDelete: Cascade)
+  vaultId String
+
+  idempotencyKey String
+  model          PaymentModel  @default(PUSH)
+  status         PaymentStatus @default(CREATED)
+  reason         String        @default("")
+
+  // amount
+  amountBase BigInt
+  amountUi   Float
+  asset      String
+  decimals   Int
+
+  // context (off-chain; bound on-chain via contextHash memo + event)
+  recipient   String
+  domain      String
+  url         String  @default("")
+  resource    String  @default("")
+  taskId      String  @default("")
+  contextHash String // sha256 hex of the canonical context
+  contextJson Json
+
+  // on-chain result
+  signature String?
+  slot      BigInt?
+  blockTime BigInt?
+  feeLamports BigInt?
+  onchainConfirmed Boolean @default(false) // indexer matched the event
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([vaultId, idempotencyKey])
+  @@index([vaultId, status])
+  @@index([vaultId, domain])
+  @@index([vaultId, taskId])
+  @@index([contextHash])
+  @@index([signature])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  vaultId   String?
+  action    String
+  actor     String
+  detail    Json
+  signature String?
+  createdAt DateTime @default(now())
+
+  @@index([vaultId])
+}
+
+// Indexer progress per program.
+model IndexerCursor {
+  programId     String   @id
+  lastSignature String?
+  updatedAt     DateTime @updatedAt
+}
