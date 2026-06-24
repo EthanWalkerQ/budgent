@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'" />
+  <title>Budgent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Martian+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="mark">BUDGENT</span><span class="tag">desktop · mainnet</span></div>
+    <div class="actions">
+      <button id="refresh" class="icon-btn" title="Refresh">⟳</button>
+      <button id="open-settings" class="icon-btn" title="Settings">⚙</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- balance hero -->
+    <section class="hero card">
+      <div class="hero-main">
+        <div class="kicker">VAULT BALANCE</div>
+        <div class="balance"><span id="bal">—</span> <span class="asset" id="asset">SOL</span></div>
+        <div class="sub" id="spent">spent today —</div>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-row"><span class="lbl">vault</span> <a href="#" id="vault-link" class="addr">—</a></div>
+        <div class="meta-row"><span class="lbl">owner</span> <span class="addr" id="owner">—</span></div>
+        <div class="meta-row"><span class="lbl">delegate</span> <span id="delegate" class="addr">—</span> <span id="del-dot" class="dot"></span></div>
+      </div>
+    </section>
+
+    <!-- policy -->
+    <section class="card">
+      <div class="kicker">POLICY · enforced on-chain</div>
+      <div class="policy">
+        <div class="stat"><div class="stat-v" id="p-pertx">—</div><div class="stat-l">per-tx cap</div></div>
+        <div class="stat"><div class="stat-v" id="p-daily">—</div><div class="stat-l">daily limit</div></div>
+        <div class="stat"><div class="stat-v" id="p-cosign">—</div><div class="stat-l">co-sign over</div></div>
+        <div class="stat"><div class="stat-v" id="p-allow">—</div><div class="stat-l">allow / block</div></div>
+      </div>
+    </section>
+
+    <!-- pay -->
+    <section class="card">
+      <div class="kicker">SEND · the program decides</div>
+      <div class="pay">
+        <input id="amount" class="inp amt" type="text" placeholder="0.01" />
+        <input id="target" class="inp tgt" type="text" placeholder="domain or recipient pubkey" />
+        <label class="cosign"><input type="checkbox" id="cosign" /> co-sign</label>
+        <button id="pay-btn" class="btn">Pay</button>
+      </div>
+      <div id="domains" class="domains"></div>
+      <div id="verdict" class="verdict"></div>
+    </section>
+
+    <!-- ledger -->
+    <section class="card">
+      <div class="kicker">LEDGER · real on-chain</div>
+      <div id="ledger" class="ledger"><div class="empty">loading…</div></div>
+    </section>
+  </main>
+
+  <!-- settings -->
+  <div id="settings" class="modal hidden">
+    <div class="modal-box card">
+      <div class="kicker">SETTINGS</div>
+      <label class="field"><span>Backend URL</span><input id="s-base" class="inp" /></label>
+      <label class="field"><span>Vault ID</span><input id="s-vault" class="inp" /></label>
+      <label class="field"><span>Key ID <em>(to send)</em></span><input id="s-key" class="inp" placeholder="bk_live_…" /></label>
+      <label class="field"><span>HMAC secret <em>(64-hex)</em></span><input id="s-hmac" class="inp" type="password" placeholder="•••" /></label>
+      <div class="armed-row"><span id="armed-state" class="armed">read-only</span></div>
+      <div class="modal-actions">
+        <button id="s-cancel" class="btn ghost">Cancel</button>
+        <button id="s-save" class="btn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
