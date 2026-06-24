@@ -1,0 +1,32 @@
+{
+  "name": "budgent-sdk",
+  "version": "0.1.0",
+  "description": "Budgent agent SDK — pay autonomously through a REST API, bounded by a non-custodial on-chain program (per-tx cap, daily limit, allow/block lists, co-sign).",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "tsc -p tsconfig.json"
+  },
+  "keywords": [
+    "budgent",
+    "solana",
+    "ai-agents",
+    "agents",
+    "payments",
+    "wallet",
+    "x402"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  },
+  "license": "MIT"
+}

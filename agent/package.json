@@ -1,0 +1,12 @@
+{
+  "name": "budgent-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --experimental-strip-types agent.ts"
+  },
+  "dependencies": {
+    "@budgent/sdk": "file:../sdk/ts"
+  }
+}

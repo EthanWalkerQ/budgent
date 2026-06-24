@@ -1,0 +1,17 @@
+{
+  "name": "budgent-cli",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Self-serve, non-custodial Budgent CLI — drive the on-chain vault program directly with your own Solana keypair.",
+  "type": "module",
+  "bin": {
+    "budgent": "budgent.mjs"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
+    "@solana/web3.js": "^1.95.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

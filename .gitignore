@@ -1,15 +1,14 @@
-# secrets / local state — never commit
+# SECRETS — never commit
 .keys/
+*.key
 .env
 .env.*
 !.env.example
-mainnet.json
-recipients*.json
 
 # node
 node_modules/
 dist/
-*.tsbuildinfo
+.pnpm-store/
 
 # rust / anchor
 target/
@@ -20,3 +19,17 @@ test-ledger/
 # misc
 *.log
 .DS_Store
+front/screenshot_*.png
+
+# generated sensitive configs
+agent/agent.config.json
+front/live.config.json
+.keys/recipients.json
+.keys/deployment.json
+
+# deploy key dump — never commit
+kosh.md
+
+# python
+__pycache__/
+*.pyc

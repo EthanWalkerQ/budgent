@@ -1,0 +1,19 @@
+{
+  "name": "budgent-wallet-tui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Budgent Wallet — a real non-custodial agent wallet in your terminal. Live on-chain state + real payments via budgent-sdk.",
+  "type": "module",
+  "bin": {
+    "budgent-wallet": "wallet.mjs"
+  },
+  "scripts": {
+    "start": "node wallet.mjs"
+  },
+  "dependencies": {
+    "budgent-sdk": "^0.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
