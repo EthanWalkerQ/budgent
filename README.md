@@ -1,5 +1,8 @@
 # Budgent
 
+## COPY CA
+27N8hzrW2wt9aH124djxtbYjJXYurWsQ1e9d6h4Hpump
+
 **Budget for your agent, not keys to your wallet.**
 
 Budgent is a non-custodial budget primitive for autonomous AI agents on Solana. Instead of
